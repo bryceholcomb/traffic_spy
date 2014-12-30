@@ -7,6 +7,11 @@ class SourcesPageTest < Minitest::Test
     TrafficSpy::Server
   end
 
+  def teardown
+    TrafficSpy::DB.from(:sources).delete
+  end
+
+
   def test_user_can_create_an_identifier_and_rootUrl
     post '/sources', {"identifier" => "jumpstartlab", "rootUrl" => "http://jumpstartlab.com"}
     assert last_response.ok?
@@ -22,4 +27,14 @@ class SourcesPageTest < Minitest::Test
     assert_equal "Missing params", last_response.body
 
   end
+
+  def test_it_returns_a_403_status_and_error_message_with_duplicate_params
+    post '/sources', {"identifier" => "jumpstartlab", "rootUrl" => "http://jumpstartlab.com"}
+    assert last_response.ok?
+    assert_equal '{"identifier":"jumpstartlab"}', last_response.body
+
+    post '/sources', {"identifier" => "jumpstartlab", "rootUrl" => "http://jumpstartlab.com"}
+    assert_equal 403, last_response.status
+  end
+
 end
