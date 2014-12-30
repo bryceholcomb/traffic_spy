@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/bryceholcomb/traffic_spy.png?label=ready&title=Ready)](https://waffle.io/bryceholcomb/traffic_spy)
 # TrafficSpy
 
 TODO: Write a gem description
