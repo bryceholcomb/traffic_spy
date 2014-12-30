@@ -6,7 +6,6 @@ module TrafficSpy
   else
     DB = Sequel.postgres "traffic_spy"
   end
-
 end
 
 #

@@ -17,6 +17,18 @@ module TrafficSpy
       erb :index
     end
 
+    post '/sources' do
+      if params['identifier'] && params['rootUrl'] && Source.new_identifier?(params)
+        Source.insert(params)
+        identifier = Source.find(params)
+        status 200; {identifier[0] => identifier[1]}.to_json
+      elsif !Source.new_identifier?(params)
+        status 403; "Duplicate"
+      else
+        status 400; "Missing params"
+      end
+    end
+
     not_found do
       erb :error
     end
