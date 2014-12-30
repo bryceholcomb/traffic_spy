@@ -18,7 +18,13 @@ module TrafficSpy
     end
 
     post '/sources' do
-      p params
+      if params['identifier'] && params['rootUrl']
+        identifier = params.find { |k,v| k == 'identifier' }
+        {identifier[0] => identifier[1]}.to_json
+      else
+        status 400
+        "Missing params"
+      end
     end
 
     not_found do

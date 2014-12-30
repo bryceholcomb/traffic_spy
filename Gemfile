@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
+  gem 'pry'
   gem 'shotgun'
   gem 'rspec'
   gem 'guard-rspec'
@@ -11,6 +12,7 @@ group :development do
 end
 
 group :test do
+  gem 'pry'
   gem 'minitest'
   gem 'capybara'
 end

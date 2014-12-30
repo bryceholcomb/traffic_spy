@@ -12,4 +12,14 @@ class SourcesPageTest < Minitest::Test
     assert last_response.ok?
     assert_equal '{"identifier":"jumpstartlab"}', last_response.body
   end
+
+  def test_it_returns_a_400_status_and_error_message_with_missing_params
+    post '/sources', {"identifier" => "jumpstartlab"}
+    assert_equal 400, last_response.status
+
+    post '/sources', {"rootUrl" => "http://jumpstartlab.com"}
+    assert_equal 400, last_response.status
+    assert_equal "Missing params", last_response.body
+
+  end
 end
