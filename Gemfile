@@ -10,6 +10,11 @@ group :development do
   gem 'rb-fsevent', '~> 0.9'
 end
 
+group :test do
+  gem 'minitest'
+  gem 'capybara'
+end
+
 group :evaluations do
   # THIS SPACE RESERVED FOR EVALUATIONS
   gem 'cane'

@@ -17,6 +17,10 @@ module TrafficSpy
       erb :index
     end
 
+    post '/sources' do
+      p params
+    end
+
     not_found do
       erb :error
     end
