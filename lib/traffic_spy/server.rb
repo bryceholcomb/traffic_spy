@@ -22,7 +22,7 @@ module TrafficSpy
         identifier = params.find { |k,v| k == 'identifier' }
         {identifier[0] => identifier[1]}.to_json
       else
-        status 400, "Missing params"
+        status 400; "Missing params"
       end
     end
 
