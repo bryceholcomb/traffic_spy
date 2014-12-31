@@ -14,7 +14,7 @@ class SourcesPageTest < Minitest::Test
 
   def test_user_can_create_an_identifier_and_rootUrl
     post '/sources', {"identifier" => "jumpstartlab", "rootUrl" => "http://jumpstartlab.com"}
-    assert last_response.ok?
+    assert_equal 200, last_response.status
     assert_equal '{"identifier":"jumpstartlab"}', last_response.body
   end
 

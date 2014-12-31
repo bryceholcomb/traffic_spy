@@ -1,8 +1,12 @@
 require_relative "../test_helper"
 
 class DataTest < Minitest::Test
+  def setup
+    # payload = this should be a json object
+  end
+  
   def test_has_attributes
-    # 
+    #
     # payload = {"url" => "http://jumpstartlab.com/blog",
     #   "requestedAt" => "2013-02-16 21:38:28 -0700",
     #   "respondedIn" => 37,

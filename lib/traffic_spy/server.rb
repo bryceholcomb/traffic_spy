@@ -29,6 +29,17 @@ module TrafficSpy
       end
     end
 
+    post '/sources/:identifier/data' do |identifier|
+      if Data.duplicate?(params['payload'])
+        status 403, "Payload already submitted"
+      elsif params['payload']
+        status 200
+        Data.create(params['payload'])
+      else
+        status 400; "Missing payload"
+      end
+    end
+
     not_found do
       erb :error
     end
