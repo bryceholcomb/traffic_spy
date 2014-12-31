@@ -21,9 +21,9 @@ module TrafficSpy
       table.map { |row| Url.new(row) }
     end
 
-    def self.find_id_by_name(name)
+    def self.find_by_name(name)
       row = table.select.where(name: name).first
-      x = Url.new(row)
+      Url.new(row)
     end
   end
 end
