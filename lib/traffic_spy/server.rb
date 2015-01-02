@@ -30,11 +30,18 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/data' do |identifier|
-      if Data.duplicate?(params['payload'])
-        status 403, "Payload already submitted"
-      elsif params['payload']
-        status 200
-        Data.create(params['payload'])
+      unless params['payload'].nil?
+        payload = JSON.parse(params['payload'])
+        payload['parameters'] = payload['parameters'].join(',')
+        # require 'pry'; binding.pry
+        if TrafficSpy::Data.duplicate?(payload)
+          status 403, "Payload already submitted"
+        elsif params['payload']
+          TrafficSpy::Data.find_or_create_by(payload)
+          status 200
+        else
+          status 400; "Missing payload"
+        end
       else
         status 400; "Missing payload"
       end

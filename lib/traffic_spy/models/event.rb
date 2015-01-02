@@ -1,5 +1,5 @@
 module TrafficSpy
-  class Url
+  class Event
     attr_reader :id, :name
 
     def initialize(data)
@@ -8,7 +8,7 @@ module TrafficSpy
     end
 
     def self.all
-      table.map { |row| Url.new(row) }
+      table.map { |row| Event.new(row) }
     end
 
     def self.find_or_create_by(attribute, value)
@@ -17,13 +17,13 @@ module TrafficSpy
         create(value)
         row = find_by(attribute, value)
       end
-      Url.new(row)
+      Event.new(row)
     end
 
     private
 
     def self.table
-      DB.from(:urls)
+      DB.from(:events)
     end
 
     def self.create(data)

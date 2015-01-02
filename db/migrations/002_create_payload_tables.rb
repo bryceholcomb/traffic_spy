@@ -3,7 +3,7 @@ Sequel.migration do
     create_table(:data) do
       primary_key :id
       foreign_key :url_id
-      DateTime :requested_at
+      String :requested_at
       Integer :responded_in
       foreign_key :referral_id
       String :request_type

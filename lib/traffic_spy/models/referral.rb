@@ -1,5 +1,5 @@
 module TrafficSpy
-  class Url
+  class Referral
     attr_reader :id, :name
 
     def initialize(data)
@@ -8,7 +8,7 @@ module TrafficSpy
     end
 
     def self.all
-      table.map { |row| Url.new(row) }
+      table.map { |row| Referral.new(row) }
     end
 
     def self.find_or_create_by(attribute, value)
@@ -17,13 +17,13 @@ module TrafficSpy
         create(value)
         row = find_by(attribute, value)
       end
-      Url.new(row)
+      Referral.new(row)
     end
 
     private
 
     def self.table
-      DB.from(:urls)
+      DB.from(:referrals)
     end
 
     def self.create(data)
