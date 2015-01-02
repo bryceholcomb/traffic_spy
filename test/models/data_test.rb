@@ -2,6 +2,7 @@ require_relative "model_test_helper"
 
 class DataTest < ModelTest
   def setup
+    # post '/sources', 'identifier=jumpstartlab&rootUrl=http://jumpstartlab.com'
     @payload = {"url" => "http://jumpstartlab.com/blog",
       "requestedAt" => "2013-02-16 21:38:28 -0700",
       "respondedIn" => 37,
@@ -16,7 +17,7 @@ class DataTest < ModelTest
   end
 
   def test_has_attributes
-    TrafficSpy::Data.find_or_create_by(@payload)
+    TrafficSpy::Data.find_or_create_by(@payload, 'jumpstartlab')
     data = TrafficSpy::Data.all.last
     assert_equal 1, data.url_id
     assert_equal 1, data.referral_id
@@ -27,15 +28,14 @@ class DataTest < ModelTest
   end
 
   def test_can_determine_if_payload_is_a_duplicate
-    payload1 = TrafficSpy::Data.find_or_create_by(@payload)
-    payload2 = TrafficSpy::Data.find_or_create_by(@payload)
+    payload1 = TrafficSpy::Data.find_or_create_by(@payload, 'jumpstartlab')
+    payload2 = TrafficSpy::Data.find_or_create_by(@payload, 'jumpstartlab')
     assert_equal payload1.id, payload2.id
     assert_equal 1, TrafficSpy::Data.all.count
   end
 
   def test_can_find_by_payload
-    TrafficSpy::Data.create(@payload)
-    found_payload = TrafficSpy::Data.find_or_create_by(@payload)
+    found_payload = TrafficSpy::Data.find_or_create_by(@payload, 'jumpstartlab')
     assert_equal @payload['requestedAt'], found_payload.requested_at
   end
 end

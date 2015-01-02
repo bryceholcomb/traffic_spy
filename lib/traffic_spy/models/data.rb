@@ -28,52 +28,28 @@ module TrafficSpy
       @source_id = data[:source_id]
     end
 
-    def self.table
-      DB.from(:data)
-    end
-
     def self.all
       table.map {|row| Data.new(row)}
     end
 
-    def self.find_or_create_by(payload)
-      # payload['parameters'] = clean_payload_parameters(payload)
-      create(payload) unless duplicate?(payload)
+    def self.find_or_create_by(payload, identifier)
       row = find_by_payload(payload)
+      if row.nil?
+        create(payload, identifier)
+        row = find_by_payload(payload)
+      end
       Data.new(row)
     end
 
-    def self.clean_payload_parameters(payload)
+    def self.clean_parameters(payload)
       if payload['parameters'].empty?
         payload['parameters'] = ''
       else
         payload['parameters'] = payload['parameters'].join(',')
       end
+      payload
     end
 
-    def self.create(payload)
-      # fields below need to be updated:
-      # referral_id
-      # request_type
-      # event_id
-      # user_agent_id
-      # resolution_id
-      # source_id
-
-      table.insert(
-      :url_id           => TrafficSpy::Url.find_or_create_by(:name, payload['url']).id,
-      :requested_at     => payload['requestedAt'],
-      :responded_in     => payload['respondedIn'],
-      :referral_id      => TrafficSpy::Referral.find_or_create_by(:name, payload['referredBy']).id,
-      :request_type     => 'GET',
-      :params           => payload['parameters'],
-      :event_id         => TrafficSpy::Event.find_or_create_by(:name, payload['eventName']).id,
-      :user_agent_id    => TrafficSpy::UserAgent.find_or_create_by(:data, payload['userAgent']).id,
-      :resolution_id    => TrafficSpy::Resolution.find_or_create_by(payload['resolutionWidth'], payload['resolutionHeight']).id,
-      :ip               => payload['ip'],
-      :source_id        => 1
-      )
-    end
 
     def self.duplicate?(payload)
       !find_by_payload(payload).nil?
@@ -85,6 +61,31 @@ module TrafficSpy
         :responded_in => payload['respondedIn'],
         :ip => payload['ip']
         ).first
+    end
+
+    private
+
+    def self.table
+      DB.from(:data)
+    end
+
+    def self.create(payload, identifier)
+      # fields below need to be updated:
+      # source_id
+
+      table.insert(
+      :url_id           => TrafficSpy::Url.find_or_create_by(:name, payload['url']).id,
+      :requested_at     => payload['requestedAt'],
+      :responded_in     => payload['respondedIn'],
+      :referral_id      => TrafficSpy::Referral.find_or_create_by(:name, payload['referredBy']).id,
+      :request_type     => payload['requestType'],
+      :params           => payload['parameters'],
+      :event_id         => TrafficSpy::Event.find_or_create_by(:name, payload['eventName']).id,
+      :user_agent_id    => TrafficSpy::UserAgent.find_or_create_by(:data, payload['userAgent']).id,
+      :resolution_id    => TrafficSpy::Resolution.find_or_create_by(payload['resolutionWidth'], payload['resolutionHeight']).id,
+      :ip               => payload['ip'],
+      :source_id        => TrafficSpy::Source.find_by(identifier).id
+      )
     end
   end
 end
