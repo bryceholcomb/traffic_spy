@@ -23,6 +23,7 @@ class DataTest < ModelTest
     assert_equal 1, data.event_id
     assert_equal 1, data.user_agent_id
     assert_equal 1, data.resolution_id
+    assert_equal 1, data.source_id
     # assert_equal "http://jumpstartlab.com/blog", data.url
   end
 

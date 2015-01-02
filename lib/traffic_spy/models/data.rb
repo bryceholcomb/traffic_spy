@@ -71,7 +71,7 @@ module TrafficSpy
       :user_agent_id    => TrafficSpy::UserAgent.find_or_create_by(:data, payload['userAgent']).id,
       :resolution_id    => TrafficSpy::Resolution.find_or_create_by(payload['resolutionWidth'], payload['resolutionHeight']).id,
       :ip               => payload['ip'],
-      :source_id        => 1
+      :source_id        => TrafficSpy::Source.find_or_create_by(:rootUrl, payload['url'])
       )
     end
 
