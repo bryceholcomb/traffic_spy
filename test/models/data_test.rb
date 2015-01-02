@@ -1,8 +1,14 @@
 require_relative "model_test_helper"
 
 class DataTest < ModelTest
+  include Rack::Test::Methods
+
+  def app
+    TrafficSpy::Server
+  end
+
   def setup
-    # post '/sources', 'identifier=jumpstartlab&rootUrl=http://jumpstartlab.com'
+    post '/sources', 'identifier=jumpstartlab&rootUrl=http://jumpstartlab.com'
     @payload = {"url" => "http://jumpstartlab.com/blog",
       "requestedAt" => "2013-02-16 21:38:28 -0700",
       "respondedIn" => 37,

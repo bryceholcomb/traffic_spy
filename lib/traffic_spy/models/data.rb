@@ -33,10 +33,10 @@ module TrafficSpy
     end
 
     def self.find_or_create_by(payload, identifier)
-      row = find_by_payload(payload)
+      row = find_by_payload(payload, identifier)
       if row.nil?
         create(payload, identifier)
-        row = find_by_payload(payload)
+        row = find_by_payload(payload, identifier)
       end
       Data.new(row)
     end
@@ -51,15 +51,17 @@ module TrafficSpy
     end
 
 
-    def self.duplicate?(payload)
-      !find_by_payload(payload).nil?
+    def self.duplicate?(payload, identifier)
+      !find_by_payload(payload, identifier).nil?
     end
 
-    def self.find_by_payload(payload)
+    def self.find_by_payload(payload, identifier)
+      source_id = DB.from(:sources).where(:identifier => identifier).first[:id]
       table.select.where(
         :requested_at => payload['requestedAt'],
         :responded_in => payload['respondedIn'],
-        :ip => payload['ip']
+        :ip => payload['ip'],
+        :source_id => source_id
         ).first
     end
 

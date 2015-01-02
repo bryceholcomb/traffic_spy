@@ -45,8 +45,8 @@ class DataPageTest < ControllerTest
     post '/sources/jumpstartlab/data', @payload
     assert_equal 1, TrafficSpy::DB.from(:data).select(:source_id).where(:requested_at => "2013-02-16 21:38:28 -0700").where(:source_id => 1).first[:source_id]
 
-    # post '/sources', 'identifier=krista&rootUrl=http://krista.com'
-    # post '/sources/krista/data', @payload
-    # assert_equal 2, TrafficSpy::DB.from(:data).select(:source_id).where(:requested_at => "2013-02-16 21:38:28 -0700").where(:source_id => 2).first[:source_id]
+    post '/sources', 'identifier=krista&rootUrl=http://krista.com'
+    post '/sources/krista/data', @payload
+    assert_equal 2, TrafficSpy::DB.from(:data).select(:source_id).where(:requested_at => "2013-02-16 21:38:28 -0700").where(:source_id => 2).first[:source_id]
   end
 end

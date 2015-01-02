@@ -32,7 +32,7 @@ module TrafficSpy
     post '/sources/:identifier/data' do |identifier|
       return status 400 if params['payload'].nil?
       payload = TrafficSpy::Data.clean_parameters(JSON.parse(params['payload']))
-      if TrafficSpy::Data.duplicate?(payload)
+      if TrafficSpy::Data.duplicate?(payload, identifier)
         status 403; "Payload already submitted"
       elsif params['payload']
         TrafficSpy::Data.find_or_create_by(payload, identifier)
