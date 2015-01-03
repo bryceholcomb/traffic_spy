@@ -50,7 +50,6 @@ module TrafficSpy
       payload
     end
 
-
     def self.duplicate?(payload, identifier)
       !find_by_payload(payload, identifier).nil?
     end

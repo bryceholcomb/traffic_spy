@@ -1,6 +1,6 @@
 module TrafficSpy
   class Source
-    attr_reader :id, :identifer, :root_url
+    attr_reader :id, :identifier, :root_url
 
     def initialize(data)
       @id = data[:id]
@@ -8,12 +8,16 @@ module TrafficSpy
       @root_url = data[:rootUrl]
     end
 
-    def self.new_identifier?(params)
-      DB.from(:sources).select(:id).where(:identifier => params['identifier']).to_a.empty?
+    def self.all
+      table.map {|row| Source.new(row)}
     end
 
-    def self.insert(params)
-      DB.from(:sources).insert(:identifier => params['identifier'], :rootUrl => params['rootUrl'])
+    def self.new_identifier?(params)
+      table.select(:id).where(:identifier => params['identifier']).to_a.empty?
+    end
+
+    def self.create(params)
+      table.insert(:identifier => params['identifier'], :rootUrl => params['rootUrl'])
     end
 
     def self.find(params)
@@ -22,8 +26,7 @@ module TrafficSpy
 
     def self.find_by(identifier)
       row = table.select.where(:identifier => identifier).first
-      
-      Source.new(row)
+      row.nil? ? nil : Source.new(row)
     end
 
     private

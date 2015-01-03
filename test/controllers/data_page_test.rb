@@ -49,4 +49,9 @@ class DataPageTest < ControllerTest
     post '/sources/krista/data', @payload
     assert_equal 2, TrafficSpy::DB.from(:data).select(:source_id).where(:requested_at => "2013-02-16 21:38:28 -0700").where(:source_id => 2).first[:source_id]
   end
+
+  def test_it_returns_403_when_identifier_doesnt_exist
+    post '/sources/krista/data', @payload
+    assert_equal 403, last_response.status
+  end
 end
