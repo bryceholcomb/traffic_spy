@@ -44,6 +44,15 @@ module TrafficSpy
       end
     end
 
+    get '/sources/:identifier' do |identifier|
+      if TrafficSpy::Source.find_by(identifier).nil?
+        status 404
+      else
+        sorted_urls_by_frequency = TrafficSpy::Data.sort_urls_by_frequency(identifier)
+        erb :identifier, locals: {identifier: identifier, sorted_urls_by_frequency: sorted_urls_by_frequency}
+      end
+    end
+
     not_found do
       erb :error
     end

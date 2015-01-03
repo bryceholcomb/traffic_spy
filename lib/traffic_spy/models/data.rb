@@ -64,6 +64,17 @@ module TrafficSpy
         ).first
     end
 
+    def self.sort_urls_by_frequency(identifier)
+      urls = DB.from(:sources).join(:data, :source_id => :id).join(:urls, :id => :url_id).where(:identifier => identifier).to_a.map { |x| x[:name]}
+      count_per_url = urls.reduce(Hash.new(0)) do |hash, url|
+        hash[url] += 1
+        hash
+      end
+      sorted_urls = count_per_url.sort_by do |url, count|
+        -count
+      end.map { |count_array| count_array[0] }
+    end
+
     private
 
     def self.table
