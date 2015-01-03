@@ -1,9 +1,48 @@
 <h1><%= identifier.capitalize %> Stats</h1>
 <div id="url_stats">
   <h2>Most Requested Urls</h2>
-  <ol>
+  <table>
+    <tr>
+      <th>Url</th>
+      <th>Number of Requests</th>
+    </tr>
     <% sorted_urls_by_frequency.each_with_index do |url, index| %>
-      <li id="url_<%= index %>"><%= url %></li>
+      <tr>
+        <td id="url_<%= index %>"><%= url[0] %></td>
+        <td><%= url[1] %></td>
+      </tr>
     <% end %>
-  </ol>
+  </table>
+</div>
+
+<div id="browser_stats">
+  <h2>Most Popular Browsers</h2>
+  <table>
+    <tr>
+      <th>Browser</th>
+      <th>Number of Requests</th>
+    </tr>
+    <% sorted_browsers_by_frequency.each_with_index do |browser, index| %>
+      <tr>
+        <td id="browser_<%= index %>"><%= browser[0] %></td>
+        <td><%= browser[1] %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<div id="os_stats">
+  <h2>Most Popular Operating Systems</h2>
+  <table>
+    <tr>
+      <th>Operating System</th>
+      <th>Number of Requests</th>
+    </tr>
+    <% sorted_os_by_frequency.each_with_index do |os, index| %>
+      <tr>
+        <td id="os_<%= index %>"><%= os[0] %></td>
+        <td><%= os[1] %></td>
+      </tr>
+    <% end %>
+  </table>
 </div>

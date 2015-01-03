@@ -29,6 +29,7 @@ class IdentifierTest < ControllerTest
     assert_equal 200, last_response.status
 
     get '/sources/krista'
-    assert_equal 404, last_response.status
+    assert_equal 200, last_response.status
+    assert 'Source not registered', last_response.body
   end
 end

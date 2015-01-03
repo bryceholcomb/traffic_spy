@@ -63,4 +63,34 @@ class IdentifierFeatureTest < FeatureTest
       end
     end
   end
+
+  def test_presents_browser_breakdown_across_all_requests
+    visit '/sources/jumpstartlab'
+    within('#browser_stats') do
+      within('h2') do
+        assert page.has_content?('Most Popular Browsers')
+      end
+      within('#browser_0') do
+        assert page.has_content?('Mozilla/5.0')
+      end
+      within('#browser_1') do
+        assert page.has_content?('Chrome/5.0')
+      end
+    end
+  end
+
+  def test_presents_os_breakdown_across_all_requests
+    visit '/sources/jumpstartlab'
+    within('#os_stats') do
+      within('h2') do
+        assert page.has_content?('Most Popular Operating Systems')
+      end
+      within('#os_0') do
+        assert page.has_content?('Macintosh; Intel Mac OS X 10_8_2')
+      end
+      within('#os_1') do
+        assert page.has_content?('Windows; Intel')
+      end
+    end
+  end
 end

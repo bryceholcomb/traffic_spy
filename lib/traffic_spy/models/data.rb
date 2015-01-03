@@ -65,14 +65,45 @@ module TrafficSpy
     end
 
     def self.sort_urls_by_frequency(identifier)
-      urls = DB.from(:sources).join(:data, :source_id => :id).join(:urls, :id => :url_id).where(:identifier => identifier).to_a.map { |x| x[:name]}
-      count_per_url = urls.reduce(Hash.new(0)) do |hash, url|
-        hash[url] += 1
-        hash
-      end
-      sorted_urls = count_per_url.sort_by do |url, count|
-        -count
-      end.map { |count_array| count_array[0] }
+      all_urls = DB.from(:sources)
+                   .join(:data, :source_id => :id)
+                   .join(:urls, :id => :url_id)
+                   .where(:identifier => identifier)
+                   .to_a
+                   .map { |record| record[:name] }
+
+      sorted_urls = all_urls.group_by { |url| url }
+                            .sort_by { |k, v| v.count }
+                            .reverse
+                            .map { |url| [url[0], url[1].count] }
+    end
+
+    def self.sort_browsers_by_frequency(identifier)
+      all_browsers = DB.from(:sources)
+                       .join(:data, :source_id => :id)
+                       .join(:user_agents, :id => :user_agent_id)
+                       .where(:identifier => identifier)
+                       .to_a
+                       .map { |record| record[:browser] }
+
+      sorted_browsers = all_browsers.group_by { |browser| browser }
+                                    .sort_by { |k, v| v.count }
+                                    .reverse
+                                    .map { |browser| [browser[0], browser[1].count] }
+    end
+
+    def self.sort_os_by_frequency(identifier)
+      all_os = DB.from(:sources)
+                       .join(:data, :source_id => :id)
+                       .join(:user_agents, :id => :user_agent_id)
+                       .where(:identifier => identifier)
+                       .to_a
+                       .map { |record| record[:os] }
+
+      sorted_os = all_os.group_by { |os| os }
+                                    .sort_by { |k, v| v.count }
+                                    .reverse
+                                    .map { |os| [os[0], os[1].count] }
     end
 
     private
@@ -82,9 +113,6 @@ module TrafficSpy
     end
 
     def self.create(payload, identifier)
-      # fields below need to be updated:
-      # source_id
-
       table.insert(
       :url_id           => TrafficSpy::Url.find_or_create_by(:name, payload['url']).id,
       :requested_at     => payload['requestedAt'],
