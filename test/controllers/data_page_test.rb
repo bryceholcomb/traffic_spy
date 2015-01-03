@@ -1,6 +1,6 @@
-require_relative "../test_helper"
+require_relative "controller_test_helper"
 
-class DataPageTest < Minitest::Test
+class DataPageTest < ControllerTest
   include Rack::Test::Methods
 
   def app
@@ -15,19 +15,12 @@ class DataPageTest < Minitest::Test
                   "respondedIn":37,
                   "referredBy":"http://jumpstartlab.com",
                   "requestType":"GET",
-                  "parameters":[],
+                  "parameters":["article title", "article body"],
                   "eventName": "socialLogin",
                   "userAgent":"Mozilla/5.0 (Macintosh%3B Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
                   "resolutionWidth":"1920",
                   "resolutionHeight":"1280",
                   "ip":"63.29.38.211"}'
-  end
-
-  def teardown
-    TrafficSpy::DB.from(:urls).delete
-    TrafficSpy::DB.from(:sources).delete
-    TrafficSpy::DB.from(:data).delete
-    TrafficSpy::DB.from(:sqlite_sequence).delete
   end
 
   def test_it_returns_200_with_params
@@ -45,6 +38,20 @@ class DataPageTest < Minitest::Test
     assert_equal 200, last_response.status
 
     post '/sources/jumpstartlab/data', @payload
+    assert_equal 403, last_response.status
+  end
+
+  def test_it_returns_correct_source_id
+    post '/sources/jumpstartlab/data', @payload
+    assert_equal 1, TrafficSpy::DB.from(:data).select(:source_id).where(:requested_at => "2013-02-16 21:38:28 -0700").where(:source_id => 1).first[:source_id]
+
+    post '/sources', 'identifier=krista&rootUrl=http://krista.com'
+    post '/sources/krista/data', @payload
+    assert_equal 2, TrafficSpy::DB.from(:data).select(:source_id).where(:requested_at => "2013-02-16 21:38:28 -0700").where(:source_id => 2).first[:source_id]
+  end
+
+  def test_it_returns_403_when_identifier_doesnt_exist
+    post '/sources/krista/data', @payload
     assert_equal 403, last_response.status
   end
 end

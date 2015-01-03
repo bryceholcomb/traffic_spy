@@ -19,7 +19,7 @@ module TrafficSpy
 
     post '/sources' do
       if params['identifier'] && params['rootUrl'] && Source.new_identifier?(params)
-        Source.insert(params)
+        Source.create(params)
         identifier = Source.find(params)
         status 200; {identifier[0] => identifier[1]}.to_json
       elsif !Source.new_identifier?(params)
@@ -30,20 +30,26 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/data' do |identifier|
-      unless params['payload'].nil?
-        payload = JSON.parse(params['payload'])
-        payload['parameters'] = payload['parameters'].join(',')
-        # require 'pry'; binding.pry
-        if TrafficSpy::Data.duplicate?(payload)
-          status 403, "Payload already submitted"
-        elsif params['payload']
-          TrafficSpy::Data.find_or_create_by(payload)
-          status 200
-        else
-          status 400; "Missing payload"
-        end
+      return status 400 if params['payload'].nil?
+      payload = TrafficSpy::Data.clean_parameters(JSON.parse(params['payload']))
+      if TrafficSpy::Source.find_by(identifier).nil?
+        status 403; "Application not registered"
+      elsif TrafficSpy::Data.duplicate?(payload, identifier)
+        status 403; "Payload already submitted"
+      elsif params['payload']
+        TrafficSpy::Data.find_or_create_by(payload, identifier)
+        status 200
       else
         status 400; "Missing payload"
+      end
+    end
+
+    get '/sources/:identifier' do |identifier|
+      if TrafficSpy::Source.find_by(identifier).nil?
+        status 404
+      else
+        sorted_urls_by_frequency = TrafficSpy::Data.sort_urls_by_frequency(identifier)
+        erb :identifier, locals: {identifier: identifier, sorted_urls_by_frequency: sorted_urls_by_frequency}
       end
     end
 

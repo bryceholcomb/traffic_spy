@@ -1,17 +1,10 @@
-require_relative "../test_helper"
+require_relative "controller_test_helper"
 
-class SourcesPageTest < Minitest::Test
+class SourcesPageTest < ControllerTest
   include Rack::Test::Methods
 
   def app
     TrafficSpy::Server
-  end
-
-  def teardown
-    TrafficSpy::DB.from(:urls).delete
-    TrafficSpy::DB.from(:sources).delete
-    TrafficSpy::DB.from(:data).delete
-    TrafficSpy::DB.from(:sqlite_sequence).delete
   end
 
   def test_user_can_create_an_identifier_and_rootUrl

@@ -9,7 +9,6 @@ class ReferralTest < ModelTest
   end
 
   def test_find_or_create_by_returns_Referral_object_found_or_created
-    TrafficSpy::Referral.create('http://jumpstartlab.com/blog')
     referral1 = TrafficSpy::Referral.find_or_create_by(:name, 'http://jumpstartlab.com/blog')
     referral2 = TrafficSpy::Referral.find_or_create_by(:name, 'http://jumpstartlab.com/blog')
     assert_equal referral1.id, referral2.id

@@ -1,0 +1,9 @@
+<h1><%= identifier.capitalize %> Stats</h1>
+<div id="url_stats">
+  <h2>Most Requested Urls</h2>
+  <ol>
+    <% sorted_urls_by_frequency.each_with_index do |url, index| %>
+      <li id="url_<%= index %>"><%= url %></li>
+    <% end %>
+  </ol>
+</div>
