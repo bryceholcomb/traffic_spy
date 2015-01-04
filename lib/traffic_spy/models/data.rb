@@ -90,6 +90,57 @@ module TrafficSpy
       #needs to be sorted
     end
 
+    def self.relative_path_exists?(identifier, root_url, relative, path)
+      # require 'pry'; binding.pry
+      path_name = path_name(root_url, relative, path)
+      query_results(:urls, identifier).map(:name).include?(path_name)
+    end
+
+    def self.path_name(root_url, relative, path)
+      if path.nil?
+        "#{root_url}/#{relative}"
+      else
+        "#{root_url}/#{relative}/#{path}"
+      end
+    end
+
+    def self.urls(root_url, relative, path)
+      path_name = path_name(root_url, relative, path)
+      table.join(:urls, :name => path_name)
+    end
+
+    def self.referrals(identifier)
+      table.join(:referrals)
+    end
+
+    def self.longest_response_time(root_url, relative, path)
+      urls(root_url, relative, path).max(:responded_in)
+    end
+
+    def self.shortest_response_time(root_url, relative, path)
+      urls(root_url, relative, path).min(:responded_in)
+    end
+
+    def self.avg_response_time(root_url, relative, path)
+      if urls(root_url, relative, path).avg(:responded_in).nil?
+        nil
+      else
+        urls(root_url, relative, path).avg(:responded_in).round(2)
+      end
+    end
+
+    def self.http_verbs(root_url, relative, path)
+      urls(root_url, relative, path).map do |url|
+        url[:request_type]
+      end.uniq.join(', ')
+    end
+
+    def self.most_pop_refs(identifier)
+      referrals(identifier).group_and_count(:name, :name).max_by do |referral|
+        referral[:count]
+      end
+    end
+
     private
 
     def self.table

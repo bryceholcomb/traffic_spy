@@ -68,6 +68,26 @@ module TrafficSpy
       end
     end
 
+    ['/sources/:identifier/urls/:relative', '/sources/:identifier/urls/:relative/:path'].each do |path_name|
+      get path_name do
+        identifier = params[:identifier]
+        root_url    = Source.find_by(identifier).root_url
+        relative   = params[:relative]
+        path       = params[:path]
+        if Data.relative_path_exists?(identifier, root_url, relative, path)
+          erb :url_stats, locals: {identifier: identifier,
+                                   long_response_time: Data.longest_response_time(root_url, relative, path),
+                                   short_response_time: Data.shortest_response_time(root_url, relative, path),
+                                   average_response_time: Data.avg_response_time(root_url, relative, path),
+                                   http_verbs: Data.http_verbs(root_url, relative, path),
+                                   most_popular_referrers: Data.most_pop_refs(identifier),
+                                   most_popular_agents: "Mozilla/5.0 (Macintosh%3B Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17"}
+        else
+          erb :url_error
+        end
+      end
+    end
+
     not_found do
       erb :error
     end
