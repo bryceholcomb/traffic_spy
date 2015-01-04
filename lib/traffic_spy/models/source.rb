@@ -29,10 +29,6 @@ module TrafficSpy
       row.nil? ? nil : Source.new(row)
     end
 
-    def self.relative_path_exists?(identifier, relative, path=nil)
-      true
-    end
-
     private
 
     def self.table

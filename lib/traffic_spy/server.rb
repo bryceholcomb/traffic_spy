@@ -74,7 +74,7 @@ module TrafficSpy
         root_url    = Source.find_by(identifier).root_url
         relative   = params[:relative]
         path       = params[:path]
-        if Source.relative_path_exists?(identifier, relative, path)
+        if Data.relative_path_exists?(identifier, root_url, relative, path)
           erb :url_stats, locals: {identifier: identifier,
                                    long_response_time: Data.longest_response_time(root_url, relative, path),
                                    short_response_time: Data.shortest_response_time(root_url, relative, path),

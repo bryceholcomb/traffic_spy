@@ -90,12 +90,22 @@ module TrafficSpy
       #needs to be sorted
     end
 
-    def self.urls(root_url, relative, path)
-      path_name = if path.nil?
+    def self.relative_path_exists?(identifier, root_url, relative, path)
+      # require 'pry'; binding.pry
+      path_name = path_name(root_url, relative, path)
+      query_results(:urls, identifier).map(:name).include?(path_name)
+    end
+
+    def self.path_name(root_url, relative, path)
+      if path.nil?
         "#{root_url}/#{relative}"
       else
         "#{root_url}/#{relative}/#{path}"
       end
+    end
+
+    def self.urls(root_url, relative, path)
+      path_name = path_name(root_url, relative, path)
       table.join(:urls, :name => path_name)
     end
 
