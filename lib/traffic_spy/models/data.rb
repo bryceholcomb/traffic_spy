@@ -64,15 +64,30 @@ module TrafficSpy
         ).first
     end
 
-    def self.sort_urls_by_frequency(identifier)
-      urls = DB.from(:sources).join(:data, :source_id => :id).join(:urls, :id => :url_id).where(:identifier => identifier).to_a.map { |x| x[:name]}
-      count_per_url = urls.reduce(Hash.new(0)) do |hash, url|
-        hash[url] += 1
-        hash
+    def self.sort_by_frequency(table, identifier, group_selector, count_selector)
+      query_results = query_results(table, identifier)
+      sort_query_results(query_results, group_selector, count_selector)
+    end
+
+    def self.query_results(table, identifier)
+      table_id = (table.to_s[0..-2] + "_id").to_sym
+      DB.from(:sources)
+        .join(:data, :source_id => :id)
+        .join(table, :id => table_id)
+        .where(:identifier => identifier)
+    end
+
+    def self.sort_query_results(query_results, group_selector, count_selector)
+      query_results.group_and_count(group_selector, count_selector).order(Sequel.desc(:count)).all
+    end
+
+    def self.sort_response_time_by_frequency_per_url(identifier)
+      query_results= query_results(:urls, identifier)
+      counted_results = query_results.group_and_count(:name, :responded_in).all
+      grouped_results = counted_results.group_by do |result|
+        result[:name]
       end
-      sorted_urls = count_per_url.sort_by do |url, count|
-        -count
-      end.map { |count_array| count_array[0] }
+      #needs to be sorted
     end
 
     private
@@ -82,9 +97,6 @@ module TrafficSpy
     end
 
     def self.create(payload, identifier)
-      # fields below need to be updated:
-      # source_id
-
       table.insert(
       :url_id           => TrafficSpy::Url.find_or_create_by(:name, payload['url']).id,
       :requested_at     => payload['requestedAt'],
