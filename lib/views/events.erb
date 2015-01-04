@@ -1,0 +1,19 @@
+<h1><%= identifier.capitalize %> Events</h1>
+    <div id="event_stats">
+      <h2>Most Recieved Event</h2>
+      <ol>
+        <% sorted_events_by_frequency.each_with_index do |event, index| %>
+        <li id="event_<%= index %>"><%= event %></li>
+        <% end %>
+      </ol>
+    </div>
+    <div id="event_links">
+      <h2> Click Event Links for more info</h2>
+      <ul>
+        <% sorted_events_by_frequency.each_with_index do |event, index| %>
+        <li>
+        <a id="event_link_<%=index%>" href="/sources/<%=identifier%>/events/<%=event%>"><%=event%></a>
+        </li>
+        <% end %>
+      </ul>
+    </div>
