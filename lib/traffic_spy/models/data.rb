@@ -64,46 +64,30 @@ module TrafficSpy
         ).first
     end
 
-    def self.sort_urls_by_frequency(identifier)
-      all_urls = DB.from(:sources)
-                   .join(:data, :source_id => :id)
-                   .join(:urls, :id => :url_id)
-                   .where(:identifier => identifier)
-                   .to_a
-                   .map { |record| record[:name] }
-
-      sorted_urls = all_urls.group_by { |url| url }
-                            .sort_by { |k, v| v.count }
-                            .reverse
-                            .map { |url| [url[0], url[1].count] }
+    def self.sort_by_frequency(table, identifier, group_selector, count_selector)
+      query_results = query_results(table, identifier)
+      sort_query_results(query_results, group_selector, count_selector)
     end
 
-    def self.sort_browsers_by_frequency(identifier)
-      all_browsers = DB.from(:sources)
-                       .join(:data, :source_id => :id)
-                       .join(:user_agents, :id => :user_agent_id)
-                       .where(:identifier => identifier)
-                       .to_a
-                       .map { |record| record[:browser] }
-
-      sorted_browsers = all_browsers.group_by { |browser| browser }
-                                    .sort_by { |k, v| v.count }
-                                    .reverse
-                                    .map { |browser| [browser[0], browser[1].count] }
+    def self.query_results(table, identifier)
+      table_id = (table.to_s[0..-2] + "_id").to_sym
+      DB.from(:sources)
+        .join(:data, :source_id => :id)
+        .join(table, :id => table_id)
+        .where(:identifier => identifier)
     end
 
-    def self.sort_os_by_frequency(identifier)
-      all_os = DB.from(:sources)
-                       .join(:data, :source_id => :id)
-                       .join(:user_agents, :id => :user_agent_id)
-                       .where(:identifier => identifier)
-                       .to_a
-                       .map { |record| record[:os] }
+    def self.sort_query_results(query_results, group_selector, count_selector)
+      query_results.group_and_count(group_selector, count_selector).order(Sequel.desc(:count)).all
+    end
 
-      sorted_os = all_os.group_by { |os| os }
-                                    .sort_by { |k, v| v.count }
-                                    .reverse
-                                    .map { |os| [os[0], os[1].count] }
+    def self.sort_response_time_by_frequency_per_url(identifier)
+      query_results= query_results(:urls, identifier)
+      counted_results = query_results.group_and_count(:name, :responded_in).all
+      grouped_results = counted_results.group_by do |result|
+        result[:name]
+      end
+      #needs to be sorted
     end
 
     private

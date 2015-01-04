@@ -48,14 +48,22 @@ module TrafficSpy
       if TrafficSpy::Source.find_by(identifier).nil?
         "Source not registered"
       else
-        sorted_urls_by_frequency = TrafficSpy::Data.sort_urls_by_frequency(identifier)
-        sorted_browsers_by_frequency = TrafficSpy::Data.sort_browsers_by_frequency(identifier)
-        sorted_os_by_frequency = TrafficSpy::Data.sort_os_by_frequency(identifier)
+        urls_by_frequency = TrafficSpy::Data.sort_by_frequency(:urls, identifier, :name, :name)
+        browsers_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :browser, :browser)
+        os_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :os, :os)
+
+        #this resolutions needs to be updated. should group and count by both width and height.
+        resolution_by_frequency = TrafficSpy::Data.sort_by_frequency(:resolutions, identifier, :width, :height)
+
+        #this needs to be updated to sort
+        response_time_by_frequency_per_url = TrafficSpy::Data.sort_response_time_by_frequency_per_url(identifier)
         erb :identifier, locals: {
           identifier: identifier,
-          sorted_urls_by_frequency: sorted_urls_by_frequency,
-          sorted_browsers_by_frequency: sorted_browsers_by_frequency,
-          sorted_os_by_frequency: sorted_os_by_frequency
+          urls_by_frequency: urls_by_frequency,
+          browsers_by_frequency: browsers_by_frequency,
+          os_by_frequency: os_by_frequency,
+          resolution_by_frequency: resolution_by_frequency,
+          response_time_by_frequency_per_url: response_time_by_frequency_per_url
           }
       end
     end
@@ -64,5 +72,4 @@ module TrafficSpy
       erb :error
     end
   end
-
 end

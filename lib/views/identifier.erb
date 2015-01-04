@@ -4,12 +4,12 @@
   <table>
     <tr>
       <th>Url</th>
-      <th>Number of Requests</th>
+      <th>Frequency</th>
     </tr>
-    <% sorted_urls_by_frequency.each_with_index do |url, index| %>
+    <% urls_by_frequency.each_with_index do |url, index| %>
       <tr>
-        <td id="url_<%= index %>"><%= url[0] %></td>
-        <td><%= url[1] %></td>
+        <td id="url_<%= index %>"><%= url[:name] %></td>
+        <td><%= url[:count] %></td>
       </tr>
     <% end %>
   </table>
@@ -20,12 +20,12 @@
   <table>
     <tr>
       <th>Browser</th>
-      <th>Number of Requests</th>
+      <th>Frequency</th>
     </tr>
-    <% sorted_browsers_by_frequency.each_with_index do |browser, index| %>
+    <% browsers_by_frequency.each_with_index do |browser, index| %>
       <tr>
-        <td id="browser_<%= index %>"><%= browser[0] %></td>
-        <td><%= browser[1] %></td>
+        <td id="browser_<%= index %>"><%= browser[:browser] %></td>
+        <td><%= browser[:count] %></td>
       </tr>
     <% end %>
   </table>
@@ -36,13 +36,48 @@
   <table>
     <tr>
       <th>Operating System</th>
-      <th>Number of Requests</th>
+      <th>Frequency</th>
     </tr>
-    <% sorted_os_by_frequency.each_with_index do |os, index| %>
+    <% os_by_frequency.each_with_index do |os, index| %>
       <tr>
-        <td id="os_<%= index %>"><%= os[0] %></td>
-        <td><%= os[1] %></td>
+        <td id="os_<%= index %>"><%= os[:os] %></td>
+        <td><%= os[:count] %></td>
       </tr>
     <% end %>
   </table>
+</div>
+
+<div id="resolution_stats">
+  <h2>Most Popular Screen Resolutions</h2>
+  <table>
+    <tr>
+      <th>Resolution</th>
+      <th>Frequency</th>
+    </tr>
+    <% resolution_by_frequency.each_with_index do |resolution, index| %>
+      <tr>
+        <td id="resolution_<%= index %>"><%= resolution[:width] %> x <%= resolution[:height] %></td>
+        <td><%= resolution[:count] %></td>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<div id="response_time_stats">
+  <h2>Response Time Stats Per Url</h2>
+  <% response_time_by_frequency_per_url.each do |key, value| %>
+    <h3><%= key %></h3>
+    <table>
+      <tr>
+        <th>Response Time</th>
+        <th>Frequency</th>
+      </tr>
+      <% value.each_with_index do |data, index| %>
+        <tr>
+          <td id="response_time_<%= index %>"><%= data[:responded_in] %></td>
+          <td><%= data[:count] %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
 </div>
