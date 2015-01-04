@@ -1,15 +1,9 @@
-require_relative "controller_test_helper"
+require_relative "feature_test_helper"
 
-class IdentifierTest < ControllerTest
-  include Rack::Test::Methods
-
-  def app
-    TrafficSpy::Server
-  end
-
+class UrlErrorFeatureTest < FeatureTest
   def setup
     post '/sources', 'identifier=jumpstartlab&rootUrl=http://jumpstartlab.com'
-    @payload = 'payload={
+    @payload1 = 'payload={
     "url":"http://jumpstartlab.com/blog",
     "requestedAt":"2013-02-16 21:38:28 -0700",
     "respondedIn":37,
@@ -21,15 +15,13 @@ class IdentifierTest < ControllerTest
     "resolutionWidth":"1920",
     "resolutionHeight":"1280",
     "ip":"63.29.38.211"}'
-    post '/sources/jumpstartlab/data', @payload
+    post '/sources/jumpstartlab/data', @payload1
   end
 
-  def test_routes_correctly
-    get '/sources/jumpstartlab'
-    assert_equal 200, last_response.status
-
-    get '/sources/krista'
-    assert_equal 200, last_response.status
-    assert 'Source not registered', last_response.body
+  def test_it_shows_error_page_when_url_doesnt_exist
+    visit '/sources/jumpstartlab/urls/article'
+    within('h2') do
+      assert page.has_content?('This URL has not been requested')
+    end
   end
 end

@@ -46,10 +46,45 @@ module TrafficSpy
 
     get '/sources/:identifier' do |identifier|
       if TrafficSpy::Source.find_by(identifier).nil?
-        status 404
+        "Source not registered"
       else
-        sorted_urls_by_frequency = TrafficSpy::Data.sort_urls_by_frequency(identifier)
-        erb :identifier, locals: {identifier: identifier, sorted_urls_by_frequency: sorted_urls_by_frequency}
+        urls_by_frequency = TrafficSpy::Data.sort_by_frequency(:urls, identifier, :name, :name)
+        browsers_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :browser, :browser)
+        os_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :os, :os)
+
+        #this resolutions needs to be updated. should group and count by both width and height.
+        resolution_by_frequency = TrafficSpy::Data.sort_by_frequency(:resolutions, identifier, :width, :height)
+
+        #this needs to be updated to sort
+        response_time_by_frequency_per_url = TrafficSpy::Data.sort_response_time_by_frequency_per_url(identifier)
+        erb :identifier, locals: {
+          identifier: identifier,
+          urls_by_frequency: urls_by_frequency,
+          browsers_by_frequency: browsers_by_frequency,
+          os_by_frequency: os_by_frequency,
+          resolution_by_frequency: resolution_by_frequency,
+          response_time_by_frequency_per_url: response_time_by_frequency_per_url
+          }
+      end
+    end
+
+    ['/sources/:identifier/urls/:relative', '/sources/:identifier/urls/:relative/:path'].each do |path_name|
+      get path_name do
+        identifier = params[:identifier]
+        root_url    = Source.find_by(identifier).root_url
+        relative   = params[:relative]
+        path       = params[:path]
+        if Data.relative_path_exists?(identifier, root_url, relative, path)
+          erb :url_stats, locals: {identifier: identifier,
+                                   long_response_time: Data.longest_response_time(root_url, relative, path),
+                                   short_response_time: Data.shortest_response_time(root_url, relative, path),
+                                   average_response_time: Data.avg_response_time(root_url, relative, path),
+                                   http_verbs: Data.http_verbs(root_url, relative, path),
+                                   most_popular_referrers: Data.most_pop_refs(identifier),
+                                   most_popular_agents: "Mozilla/5.0 (Macintosh%3B Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17"}
+        else
+          erb :url_error
+        end
       end
     end
 
@@ -84,5 +119,4 @@ module TrafficSpy
       erb :error
     end
   end
-
 end
