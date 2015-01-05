@@ -81,6 +81,14 @@ module TrafficSpy
       query_results.group_and_count(group_selector, count_selector).order(Sequel.desc(:count)).all
     end
 
+    def self.sort_urls_by_frequency(table, identifier, group_selector, count_selector)
+      sorted_query = sort_by_frequency(table, identifier, group_selector, count_selector)
+      sorted_query.each do |e|
+        e[:relative_path] = e[:name].match(/^.*\.[a-zA-Z]+\//).post_match
+      end
+      sorted_query
+    end
+
     def self.sort_response_time_by_frequency_per_url(identifier)
       query_results(:urls, identifier).select_group(:name)
                                       .select_append{avg(:responded_in)}

@@ -44,7 +44,7 @@ class IdentifierFeatureTest < FeatureTest
     "ip":"63.29.38.211"}'
 
     @payload4 = 'payload={
-    "url":"http://jumpstartlab.com/article",
+    "url":"http://jumpstartlab.com/article/1",
     "requestedAt":"2013-02-16 21:40:28 -0700",
     "respondedIn":40,
     "referredBy":"http://jumpstartlab.com",
@@ -137,5 +137,36 @@ class IdentifierFeatureTest < FeatureTest
         assert page.has_content?("http://jumpstartlab.com/article")
       end
     end
+  end
+
+  def test_has_all_url_links
+    visit '/sources/jumpstartlab'
+    within('#url_stats') do
+      within('#url_0') do
+        assert page.has_content?('http://jumpstartlab.com/blog')
+      end
+    end
+    click_link('url_0')
+    assert_equal '/sources/jumpstartlab/urls/blog', current_path
+  end
+
+  def test_url_link_with_long_path_works
+    visit '/sources/jumpstartlab'
+    within('#url_stats') do
+      within('#url_1') do
+        assert page.has_content?('http://jumpstartlab.com/article/1')
+      end
+    end
+    click_link('url_1')
+    assert_equal '/sources/jumpstartlab/urls/article/1', current_path
+  end
+
+  def test_has_aggregate_event_link
+    visit '/sources/jumpstartlab'
+    within('#events') do
+      assert page.has_content?('Events Information')
+    end
+    click_link('events')
+    assert_equal '/sources/jumpstartlab/events', current_path
   end
 end

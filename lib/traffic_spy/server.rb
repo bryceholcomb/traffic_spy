@@ -51,11 +51,9 @@ module TrafficSpy
         urls_by_frequency = Data.sort_by_frequency(:urls, identifier, :name, :name)
         browsers_by_frequency = Data.sort_by_frequency(:user_agents, identifier, :browser, :browser)
         os_by_frequency = Data.sort_by_frequency(:user_agents, identifier, :os, :os)
-
         #this resolutions needs to be updated. should group and count by both width and height.
         resolution_by_frequency = Data.sort_by_frequency(:resolutions, identifier, :width, :height)
         response_time_by_frequency_per_url = Data.sort_response_time_by_frequency_per_url(identifier)
-        # require 'pry'; binding.pry
         erb :identifier, locals: {
           identifier: identifier,
           urls_by_frequency: urls_by_frequency,

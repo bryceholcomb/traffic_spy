@@ -8,7 +8,9 @@
     </tr>
     <% urls_by_frequency.each_with_index do |url, index| %>
       <tr>
-        <td id="url_<%= index %>"><%= url[:name] %></td>
+        <td>
+          <a id="url_<%= index %>" href="/sources/<%=identifier%>/urls/<%= url[:relative_path]%>"><%= url[:name] %></a>
+        </td>
         <td><%= url[:count] %></td>
       </tr>
     <% end %>
@@ -78,3 +80,5 @@
       <% end %>
     </table>
 </div>
+
+<a id="events" href="/sources/<%= identifier %>/events">Events Information</a>

@@ -81,7 +81,7 @@ class SpecificEventFeatureTest < FeatureTest
   def test_hour_by_hour_breakdown
     visit '/sources/jumpstartlab/events/socialLogin1'
     within('#hour_by_hour') do
-      assert page.has_content?('Hour by hour breakdown of when events are recieved')
+      assert page.has_content?('Hour by hour breakdown of when events are received')
 
       within('#hour_21') do
         assert page.has_content?('21: 2')
@@ -94,5 +94,14 @@ class SpecificEventFeatureTest < FeatureTest
     within('#times_received') do
       assert page.has_content?('Times event has been received: 3')
     end
+  end
+
+  def test_has_an_event_index_link
+    visit '/sources/jumpstartlab/events/socialLogin1'
+    within('#events_index') do
+      assert page.has_content?('Events Index')
+    end
+    click_link('events_index')
+    assert_equal '/sources/jumpstartlab/events', current_path
   end
 end
