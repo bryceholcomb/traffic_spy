@@ -52,11 +52,6 @@ class EventFeatureTest < FeatureTest
     end
   end
 
-  # def test_jjl
-  #   get '/sources/krista/events'
-  #   assert_equal 404, last_response.status
-  # end
-
   # isn't loading the identifier_error_page??
   def test_view_for_unknown_identifier
     visit '/sources/krista/events'
@@ -94,9 +89,8 @@ end
       assert page.has_content?('socialLogin1')
     end
     within('#event_link_1') do
-     assert page.has_content?('socialLogin')
+      assert page.has_content?('socialLogin')
     end
-    click_link('socialLogin')
-    assert_equal '/sources/jumpstartlab/events/socialLogin', current_path
+    # click_link('event_link_1')
   end
 end

@@ -39,13 +39,26 @@ class SpecificEventFeatureTest < FeatureTest
     "resolutionWidth":"2000",
     "resolutionHeight":"1000",
     "ip":"63.29.38.212"}'
+    @payload4 = 'payload={
+    "url":"http://jumpstartlab.com/blog",
+    "requestedAt":"2013-03-17 21:38:28 -0700",
+    "respondedIn":37,
+    "referredBy":"http://jumpstartlab.com",
+    "requestType":"GET",
+    "parameters":["article title", "article body"],
+    "eventName": "socialLogin1",
+    "userAgent":"Mozilla/5.0 (Macintosh%3B Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+    "resolutionWidth":"1920",
+    "resolutionHeight":"1280",
+    "ip":"63.29.38.241"}'
     post '/sources/jumpstartlab/data', @payload1
     post '/sources/jumpstartlab/data', @payload2
     post '/sources/jumpstartlab/data', @payload3
+    post '/sources/jumpstartlab/data', @payload4
   end
 
   def test_has_header
-    visit '/sources/jumpstartlab/events/socialLogin'
+    visit '/sources/jumpstartlab/events/socialLogin1'
     within('h1') do
       assert page.has_content?('More details for Jumpstartlab, Event: socialLogin')
     end
@@ -66,20 +79,20 @@ class SpecificEventFeatureTest < FeatureTest
   end
 
   def test_hour_by_hour_breakdown
-    visit '/sources/bryce/events/fail'
+    visit '/sources/jumpstartlab/events/socialLogin1'
     within('#hour_by_hour') do
       assert page.has_content?('Hour by hour breakdown of when events are recieved')
 
-      within('#hour_21')
-        assert page.has_content?('24: 2')
+      within('#hour_21') do
+        assert page.has_content?('21: 2')
       end
     end
   end
 
-
   def test_shows_how_many_times_it_was_recieved_overall
-    within('#times_received')
-    assert page.has_content?('Times Event has been received: 3')
+    visit '/sources/jumpstartlab/events/socialLogin1'
+    within('#times_received') do
+      assert page.has_content?('Times event has been received: 3')
+    end
   end
-
 end

@@ -158,12 +158,27 @@ module TrafficSpy
       end
     end
 
-    def self.event_exisit?(identifier, event)
+    def self.event_exists?(identifier, event)
       all_events(identifier).include?(event)
+    end
+
+    def self.event_count(identifier, event)
+      event_results(identifier, event).count
+    end
+
+    def self.event_results(identifier, event)
+      query_results(:events, identifier).where(:name => event)
     end
 
     def self.joined_events_table(identifier)
      DB.from(:sources).join(:data, :source_id => :id).join(:events, :id => :event_id).where(:identifier => identifier).to_a
+    end
+
+    def self.sorted_requested_times(identifier, event)
+      event_results(identifier, event).map(:requested_at)
+                                      .map {|datetime| DateTime.parse(datetime)
+                                      .strftime("%H")}
+                                      .group_by {|e| e }
     end
 
     private
