@@ -70,18 +70,23 @@ module TrafficSpy
 
     ['/sources/:identifier/urls/:relative', '/sources/:identifier/urls/:relative/:path'].each do |path_name|
       get path_name do
-        identifier = params[:identifier]
-        root_url    = Source.find_by(identifier).root_url
-        relative   = params[:relative]
-        path       = params[:path]
-        if Data.relative_path_exists?(identifier, root_url, relative, path)
+        identifier          = params[:identifier]
+        url                 = Source.find_by(identifier).root_url
+        rel                 = params[:relative]
+        path                = params[:path]
+        long_resp_time      = Data.long_resp_time(identifier, url, rel, path)
+        short_resp_time     = Data.short_resp_time(identifier, url, rel, path)
+        http_verbs          = Data.http_verbs(identifier, url, rel, path)
+        most_pop_refferers  = Data.most_pop_refs(identifier)
+        most_pop_agents     = Data.most_pop_agents(identifier)
+        if Data.relative_path_exists?(identifier, url, rel, path)
           erb :url_stats, locals: {identifier: identifier,
-                                   long_response_time: Data.longest_response_time(root_url, relative, path),
-                                   short_response_time: Data.shortest_response_time(root_url, relative, path),
-                                   average_response_time: Data.avg_response_time(root_url, relative, path),
-                                   http_verbs: Data.http_verbs(root_url, relative, path),
-                                   most_popular_referrers: Data.most_pop_refs(identifier),
-                                   most_popular_agents: "Mozilla/5.0 (Macintosh%3B Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17"}
+                                   long_response_time:      long_resp_time,
+                                   short_response_time:     short_resp_time,
+                                   avg_response_time:       Data.avg_resp_time(identifier, url, rel, path),
+                                   http_verbs:              http_verbs,
+                                   most_popular_referrers:  most_pop_refferers,
+                                   most_popular_agents:     most_pop_agents}
         else
           erb :url_error
         end

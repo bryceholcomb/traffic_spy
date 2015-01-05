@@ -74,7 +74,7 @@
       </tr>
       <% value.each_with_index do |data, index| %>
         <tr>
-          <td id="response_time_<%= index %>"><%= data[:responded_in] %></td>
+          <td><%= index %>"><%= data[:responded_in] %></td>
           <td><%= data[:count] %></td>
         </tr>
       <% end %>

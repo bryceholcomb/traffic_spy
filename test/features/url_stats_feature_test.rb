@@ -62,7 +62,7 @@ class UrlStatsFeatureTest < FeatureTest
     visit '/sources/jumpstartlab/urls/blog'
     within('#long_resp_time') do
       assert page.has_content?('Longest Response Time:')
-      assert page.has_content?(40)
+      assert page.has_content?('40 seconds')
     end
   end
 
@@ -70,7 +70,7 @@ class UrlStatsFeatureTest < FeatureTest
     visit '/sources/jumpstartlab/urls/blog'
     within('#short_resp_time') do
       assert page.has_content?('Shortest Response Time:')
-      assert page.has_content?(24)
+      assert page.has_content?('24 seconds')
     end
   end
 
@@ -78,7 +78,7 @@ class UrlStatsFeatureTest < FeatureTest
     visit '/sources/jumpstartlab/urls/blog'
     within('#avg_resp_time') do
       assert page.has_content?('Average Response Time:')
-      assert page.has_content?(33.67)
+      assert page.has_content?('33.67 seconds')
     end
   end
 
@@ -94,6 +94,11 @@ class UrlStatsFeatureTest < FeatureTest
     visit '/sources/jumpstartlab/urls/blog'
     within('#most_pop_refs') do
       assert page.has_content?('Most Popular Referrers:')
+    end
+    within('#referral_0') do
+      assert page.has_content?("http://jumpstartlab.com")
+    end
+    within('#referral_1') do
       assert page.has_content?("http://google.com")
     end
   end
@@ -102,7 +107,12 @@ class UrlStatsFeatureTest < FeatureTest
     visit '/sources/jumpstartlab/urls/blog'
     within('#most_pop_agents') do
       assert page.has_content?('Most Popular User Agents:')
-      assert page.has_content?("Mozilla/5.0 (Macintosh%3B Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17")
+    end
+    within('#user_agent_0') do
+      assert page.has_content?("Mozilla")
+    end
+    within('#user_agent_1') do
+      assert page.has_content?("Chrome")
     end
   end
 end

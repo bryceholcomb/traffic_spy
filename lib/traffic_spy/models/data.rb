@@ -91,7 +91,6 @@ module TrafficSpy
     end
 
     def self.relative_path_exists?(identifier, root_url, relative, path)
-      # require 'pry'; binding.pry
       path_name = path_name(root_url, relative, path)
       query_results(:urls, identifier).map(:name).include?(path_name)
     end
@@ -104,40 +103,41 @@ module TrafficSpy
       end
     end
 
-    def self.urls(root_url, relative, path)
-      path_name = path_name(root_url, relative, path)
-      table.join(:urls, :name => path_name)
-    end
-
     def self.referrals(identifier)
       table.join(:referrals)
     end
 
-    def self.longest_response_time(root_url, relative, path)
-      urls(root_url, relative, path).max(:responded_in)
+    def self.long_resp_time(identifier, root_url, relative, path)
+      path_name = path_name(root_url, relative, path)
+      query_results(:urls, identifier).where(:name => path_name).max(:responded_in)
     end
 
-    def self.shortest_response_time(root_url, relative, path)
-      urls(root_url, relative, path).min(:responded_in)
+    def self.short_resp_time(identifier, root_url, relative, path)
+      path_name = path_name(root_url, relative, path)
+      query_results(:urls, identifier).where(:name => path_name).min(:responded_in)
     end
 
-    def self.avg_response_time(root_url, relative, path)
-      if urls(root_url, relative, path).avg(:responded_in).nil?
-        nil
-      else
-        urls(root_url, relative, path).avg(:responded_in).round(2)
-      end
+    def self.avg_resp_time(identifier, root_url, relative, path)
+      path_name = path_name(root_url, relative, path)
+      query_results(:urls, identifier).where(:name => path_name).avg(:responded_in).round(2)
     end
 
-    def self.http_verbs(root_url, relative, path)
-      urls(root_url, relative, path).map do |url|
+    def self.http_verbs(identifier, root_url, relative, path)
+      path_name = path_name(root_url, relative, path)
+      query_results(:urls, identifier).where(:name => path_name).map do |url|
         url[:request_type]
       end.uniq.join(', ')
     end
 
     def self.most_pop_refs(identifier)
-      referrals(identifier).group_and_count(:name, :name).max_by do |referral|
-        referral[:count]
+      query_results(:referrals, identifier).group_and_count(:name, :name).sort_by do |result|
+        -result[:count]
+      end
+    end
+
+    def self.most_pop_agents(identifier)
+      query_results(:user_agents, identifier).group_and_count(:data, :data).sort_by do |result|
+        -result[:count]
       end
     end
 
