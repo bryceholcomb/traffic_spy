@@ -90,12 +90,11 @@ module TrafficSpy
     end
 
     def self.sort_response_time_by_frequency_per_url(identifier)
-      query_results= query_results(:urls, identifier)
-      counted_results = query_results.group_and_count(:name, :responded_in).all
-      grouped_results = counted_results.group_by do |result|
-        result[:name]
-      end
-      #needs to be sorted
+      query_results(:urls, identifier).select_group(:name)
+                                      .select_append{avg(:responded_in)}
+                                      .sort_by { |result| result[:"avg(`responded_in`)"]}
+                                      .reverse
+                                      .map {|result| {:name => result[:name], :avg_resp_time => result[:"avg(`responded_in`)"]}}
     end
 
     def self.relative_path_exists?(identifier, root_url, relative, path)
