@@ -48,7 +48,7 @@ module TrafficSpy
       if TrafficSpy::Source.find_by(identifier).nil?
         "Source not registered"
       else
-        urls_by_frequency = TrafficSpy::Data.sort_by_frequency(:urls, identifier, :name, :name)
+        urls_by_frequency = TrafficSpy::Data.sort_urls_by_frequency(:urls, identifier, :name, :name)
         browsers_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :browser, :browser)
         os_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :os, :os)
 
