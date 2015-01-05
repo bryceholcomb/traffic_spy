@@ -31,13 +31,13 @@ module TrafficSpy
 
     post '/sources/:identifier/data' do |identifier|
       return status 400 if params['payload'].nil?
-      payload = TrafficSpy::Data.clean_parameters(JSON.parse(params['payload']))
-      if TrafficSpy::Source.find_by(identifier).nil?
+      payload = Data.clean_parameters(JSON.parse(params['payload']))
+      if Source.find_by(identifier).nil?
         status 403; "Application not registered"
-      elsif TrafficSpy::Data.duplicate?(payload, identifier)
+      elsif Data.duplicate?(payload, identifier)
         status 403; "Payload already submitted"
       elsif params['payload']
-        TrafficSpy::Data.find_or_create_by(payload, identifier)
+        Data.find_or_create_by(payload, identifier)
         status 200
       else
         status 400; "Missing payload"
@@ -45,18 +45,17 @@ module TrafficSpy
     end
 
     get '/sources/:identifier' do |identifier|
-      if TrafficSpy::Source.find_by(identifier).nil?
+      if Source.find_by(identifier).nil?
         "Source not registered"
       else
-        urls_by_frequency = TrafficSpy::Data.sort_by_frequency(:urls, identifier, :name, :name)
-        browsers_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :browser, :browser)
-        os_by_frequency = TrafficSpy::Data.sort_by_frequency(:user_agents, identifier, :os, :os)
+        urls_by_frequency = Data.sort_by_frequency(:urls, identifier, :name, :name)
+        browsers_by_frequency = Data.sort_by_frequency(:user_agents, identifier, :browser, :browser)
+        os_by_frequency = Data.sort_by_frequency(:user_agents, identifier, :os, :os)
 
         #this resolutions needs to be updated. should group and count by both width and height.
-        resolution_by_frequency = TrafficSpy::Data.sort_by_frequency(:resolutions, identifier, :width, :height)
-
-        #this needs to be updated to sort
-        response_time_by_frequency_per_url = TrafficSpy::Data.sort_response_time_by_frequency_per_url(identifier)
+        resolution_by_frequency = Data.sort_by_frequency(:resolutions, identifier, :width, :height)
+        response_time_by_frequency_per_url = Data.sort_response_time_by_frequency_per_url(identifier)
+        # require 'pry'; binding.pry
         erb :identifier, locals: {
           identifier: identifier,
           urls_by_frequency: urls_by_frequency,
@@ -94,22 +93,22 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/events' do |identifier|
-      if TrafficSpy::Source.find_by(identifier).nil?
+      if Source.find_by(identifier).nil?
         erb :identifier_error, locals: {identifier: identifier}
-      elsif TrafficSpy::Data.all_events(identifier).empty?
+      elsif Data.all_events(identifier).empty?
         erb :events_error, locals: {identifier: identifier}
       else
-        sorted_events_by_frequency = TrafficSpy::Data.sort_events_by_frequency(identifier)
+        sorted_events_by_frequency = Data.sort_events_by_frequency(identifier)
         erb :events, locals: {identifier: identifier, sorted_events_by_frequency: sorted_events_by_frequency}
       end
     end
 
     get '/sources/:identifier/events/:event' do |identifier, event|
-      if TrafficSpy::Source.find_by(identifier).nil?
+      if Source.find_by(identifier).nil?
         erb :identifier_error, locals: {identifier: identifier}
-      elsif TrafficSpy::Data.all_events(identifier).include?(event)
-        event_count = TrafficSpy::Data.event_count(identifier, event)
-        sorted_request_times =TrafficSpy::Data.sorted_requested_times(identifier, event)
+      elsif Data.all_events(identifier).include?(event)
+        event_count = Data.event_count(identifier, event)
+        sorted_request_times =Data.sorted_requested_times(identifier, event)
         # require 'pry'
         # binding.pry
         erb :specific_event, locals: {identifier: identifier, specific_event: event, event_count: event_count, sorted_request_times: sorted_request_times}

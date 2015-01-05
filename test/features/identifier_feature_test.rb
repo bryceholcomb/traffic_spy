@@ -131,11 +131,11 @@ class IdentifierFeatureTest < FeatureTest
     visit '/sources/jumpstartlab'
     within('#response_time_stats') do
       within('h2') do
-        assert page.has_content?('Response Time Stats Per Url')
+        assert page.has_content?('Average Response Times Per Url')
       end
-      # within('#url_0') do
-      #   assert page.has_content?()
-      # end
+      within('#resp_time_0') do
+        assert page.has_content?("http://jumpstartlab.com/article")
+      end
     end
   end
 end

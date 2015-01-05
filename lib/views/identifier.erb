@@ -64,20 +64,17 @@
 </div>
 
 <div id="response_time_stats">
-  <h2>Response Time Stats Per Url</h2>
-  <% response_time_by_frequency_per_url.each do |key, value| %>
-    <h3><%= key %></h3>
+  <h2>Average Response Times Per Url</h2>
     <table>
       <tr>
-        <th>Response Time</th>
-        <th>Frequency</th>
+        <th>URL</th>
+        <th>Average Response Time</th>
       </tr>
-      <% value.each_with_index do |data, index| %>
+      <% response_time_by_frequency_per_url.each_with_index do |data, index| %>
         <tr>
-          <td><%= index %>"><%= data[:responded_in] %></td>
-          <td><%= data[:count] %></td>
+          <td id='resp_time_<%= index %>'><%= data[:name] %></td>
+          <td><%= data[:avg_resp_time] %></td>
         </tr>
       <% end %>
     </table>
-  <% end %>
 </div>
