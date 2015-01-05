@@ -1,0 +1,12 @@
+<h1>More details for <%= identifier.capitalize %>, Event: <%= specific_event%></h1>
+<div id="times_received">
+  <h2> Times event has been received: <%=event_count%> </h2>
+</div>
+<div id="hour_by_hour" >
+  <h2> Hour by hour breakdown of when events are recieved </h2>
+    <% 24.times do |i| %>
+      <% i < 10 ? hour = "0#{i}": hour = i.to_s %>
+      <p id="hour_<%=i%>"> <%= hour %>: <%= !sorted_request_times[hour].nil? ? sorted_request_times[hour].count : '0' %></p><br>
+    <%end %>
+  </h2>
+</div>

@@ -93,6 +93,31 @@ module TrafficSpy
       end
     end
 
+    get '/sources/:identifier/events' do |identifier|
+      if TrafficSpy::Source.find_by(identifier).nil?
+        erb :identifier_error, locals: {identifier: identifier}
+      elsif TrafficSpy::Data.all_events(identifier).empty?
+        erb :events_error, locals: {identifier: identifier}
+      else
+        sorted_events_by_frequency = TrafficSpy::Data.sort_events_by_frequency(identifier)
+        erb :events, locals: {identifier: identifier, sorted_events_by_frequency: sorted_events_by_frequency}
+      end
+    end
+
+    get '/sources/:identifier/events/:event' do |identifier, event|
+      if TrafficSpy::Source.find_by(identifier).nil?
+        erb :identifier_error, locals: {identifier: identifier}
+      elsif TrafficSpy::Data.all_events(identifier).include?(event)
+        event_count = TrafficSpy::Data.event_count(identifier, event)
+        sorted_request_times =TrafficSpy::Data.sorted_requested_times(identifier, event)
+        # require 'pry'
+        # binding.pry
+        erb :specific_event, locals: {identifier: identifier, specific_event: event, event_count: event_count, sorted_request_times: sorted_request_times}
+      else
+        erb :specific_event_error, locals: {identifier: identifier, event: event}
+      end
+    end
+
     not_found do
       erb :error
     end
