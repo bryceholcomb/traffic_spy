@@ -1,10 +1,34 @@
 <h1><%= identifier.capitalize %></h1>
 <h2>URL Stats</h2>
 <div id='url_stats'>
-  <p id='long_resp_time'><b>Longest Response Time:</b>  <%= long_response_time %></p>
-  <p id='short_resp_time'><b>Shortest Response Time:</b>  <%= short_response_time %></p>
-  <p id='avg_resp_time'><b>Average Response Time:</b>  <%= average_response_time %></p>
+  <p id='long_resp_time'><b>Longest Response Time:</b>  <%= long_response_time %> seconds</p>
+  <p id='short_resp_time'><b>Shortest Response Time:</b>  <%= short_response_time %> seconds</p>
+  <p id='avg_resp_time'><b>Average Response Time:</b>  <%= avg_response_time %> seconds</p>
   <p id='http_verbs'><b>HTTP Verbs Used:</b>  <%= http_verbs %></p>
-  <p id='most_pop_refs'><b>Most Popular Referrers:</b>  <%= most_popular_referrers %></p>
-  <p id='most_pop_agents'><b>Most Popular User Agents:</b>  <%= most_popular_agents %></p>
+  <h3 id='most_pop_refs'>Most Popular Referrers:</h3>
+    <table>
+      <tr>
+        <th>URL Referred By</th>
+        <th>Frequency</th>
+      </tr>
+      <% most_popular_referrers.each_with_index do |referrer, index| %>
+      <tr>
+        <td id='referral_<%= index %>'><%= referrer[:name] %></td>
+        <td><%= referrer[:count] %></td>
+      </tr>
+      <% end %>
+    </table>
+  <h3 id='most_pop_agents'>Most Popular User Agents:</h3>
+    <table>
+      <tr>
+        <th>User Agent</th>
+        <th>Frequency</th>
+      </tr>
+      <% most_popular_agents.each_with_index do |user_agent, index| %>
+      <tr>
+        <td id='user_agent_<%= index %>'><%= user_agent[:data] %></td>
+        <td><%= user_agent[:count] %></td>
+      </tr>
+      <% end %>
+    </table>
 </div>
