@@ -1,29 +1,4 @@
 # TrafficSpy
+TrafficSpy is a web traffic and analytics Ruby on Sinatra application that takes simulated HTTP requests. The application parses the data and saves it then displays usable information for the sender from the server.
 
-TODO: Write a gem description
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'traffic_spy'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install traffic_spy
-
-## Usage
-
-TODO: Write usage instructions here
-
-## Contributing
-
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+This application was a group project built for the Turing School of Software and Design.
